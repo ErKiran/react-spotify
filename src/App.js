@@ -10,10 +10,6 @@ function App() {
         Spotify React
      </div>
       <SearchBar />
-      <div className="Profile">
-        <div>Artist Picture</div>
-        <div>Artist Name</div>
-      </div>
       <div className="Gallery">
         Gallery
       </div>

@@ -1,29 +1,33 @@
 import React, { Component } from 'react';
-import axios from 'axios';
-
 import { FormControl, FormGroup, InputGroup, Button } from 'react-bootstrap';
-import config from '../config/config';
+
+import Artist from './Artist';
+import Genre from './Genre';
+import Gallery from './Gallery';
+import { getArtist, getTopTrack } from '../api';
 
 class SearchBar extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            query: ''
+            query: '',
+            artist: '',
+            followers: null,
+            images: null,
+            genre: '',
+            tracks: ''
         }
     }
     async submit() {
-        console.log(this.state)
-        const options = {
-            method: 'GET',
-            url: `https://api.spotify.com/v1/search?q=${this.state.query}&type=track`,
-            headers: {
-                'Authorization': `Bearer ${config.Bearer}`,
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-            }
-        }
-        const res = await axios(options);
-        console.log(res)
+        const artists = await getArtist(this.state.query);
+        const toptrack = await getTopTrack(artists.id);
+        this.setState({
+            artist: artists.name,
+            followers: artists.followers.total,
+            images: artists.images.map(i => i.url),
+            genre: artists.genres,
+            tracks: toptrack
+        })
     }
     render() {
         return (
@@ -40,6 +44,17 @@ class SearchBar extends Component {
                     </InputGroup>
 
                 </FormGroup>
+                <Artist
+                    artist={this.state.artist}
+                    followers={this.state.followers}
+                    images={this.state.images}
+                />
+                <Genre
+                    genre={this.state.genre}
+                />
+                <Gallery
+                    track={this.state.tracks}
+                />
             </div>
         );
     }
